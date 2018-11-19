@@ -33,10 +33,12 @@ export class EngineService {
     this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.customer, e.task));
 
     setInterval(() => {
+      const tick = Math.round((Date.now() - this.startedAt.getTime()) / 1000 * config.timeScale) * 1000;
       this.emitter.emit(
         TimeShiftedEvent.name,
         new TimeShiftedEvent(
-          Math.round((Date.now() - this.startedAt.getTime()) / 1000 * config.timeScale),
+          new Date(Date.now() + tick),
+          this.startedAt,
           config.gameDuration * config.timeScale
         )
       );

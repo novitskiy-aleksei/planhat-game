@@ -50,7 +50,7 @@ export class CustomerChangedEvent extends EngineEvent {
 }
 
 export class TimeShiftedEvent extends EngineEvent {
-  constructor(public current: number, public gameDuration: number) {
+  constructor(public current: Date, public gameStarted: Date, public gameDuration: number) {
     super();
   }
 }
