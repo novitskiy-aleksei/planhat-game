@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Player } from './player';
+import { Player } from '../modules/engine/models/player';
 
 @Injectable()
 export class AuthService {

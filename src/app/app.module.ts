@@ -9,8 +9,8 @@ import { GameModule } from './modules/game/game.module';
 import { EngineModule } from './modules/engine/engine.module';
 import { GamePanelModule } from './modules/game-panel/game-panel.module';
 import { ScoresModule } from './modules/scores/scores.module';
-import { AuthService } from './auth/auth.service';
-import { AuthGuard } from './auth/auth-guard.service';
+import { AuthService } from './utils/auth.service';
+import { AuthGuard } from './utils/auth-guard.service';
 
 
 @NgModule({
