@@ -7,21 +7,23 @@ import { CustomerComponent } from './components/customer/customer.component';
 import { GamePanelModule } from '../game-panel/game-panel.module';
 import { ModalComponent } from './components/modal/modal.component';
 import { ModalService } from './services/modal.service';
+import { PhoneMiniGameModule } from '../phone-minigame/phone-minigame.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    GamePanelModule
+    GamePanelModule,
+    PhoneMiniGameModule,
   ],
   declarations: [
     GameComponent,
     BoardComponent,
     TimelineComponent,
     CustomerComponent,
-    ModalComponent
+    ModalComponent,
   ],
   providers: [
-    ModalService
+    ModalService,
   ]
 })
 export class GameModule {

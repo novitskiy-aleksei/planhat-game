@@ -14,7 +14,7 @@ export class GameComponent implements OnInit {
   }
 
   openModal() {
-    this.modalService.open('main-modal');
+    this.modalService.open('phone-minigame-modal');
   }
 
 }

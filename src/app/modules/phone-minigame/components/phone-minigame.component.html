@@ -1,0 +1,67 @@
+<div class="game-container">
+  <div class="title">
+    Dial customers number as fast as you can!
+  </div>
+  <div class="legend">
+    * Green button - call, gray button - erase last entered number, red button - cancel call
+  </div>
+  <div class="target-number">
+    {{ target }}
+  </div>
+  <div class="phone-container">
+    <div class="body-container">
+      <div class="body-container-inner">
+        <div class="speaker-container">
+          <div class="row">
+            <div *ngFor="let item of times(17)" class="dot">{{ item }}</div>
+          </div>
+          <div class="row">
+              <div *ngFor="let item of times(18)" class="dot">{{ item }}</div>
+          </div>
+          <div class="row">
+              <div *ngFor="let item of times(17)" class="dot">{{ item }}</div>
+          </div>
+        </div>
+
+        <div class="screen-container">
+          <div class="screen-container-inner">
+            <div class="input">
+              {{ input }}
+            </div>
+            <div class="time">
+              4:25 AM
+            </div>
+          </div>
+        </div>
+
+        <div class="keyboard">
+          <div class="row actions">
+            <div class="button call" (click)="callClick()"><div class="inner"></div></div>
+            <div class="button erase" (click)="eraseClick()"><div class="inner"></div></div>
+            <div class="button cancel" (click)="cancelClick()"><div class="inner"></div></div>
+          </div>
+          <div class="row">
+            <div class="button" (click)="buttonClick(buttons[0])"><div class="inner">{{ buttons[0] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[1])"><div class="inner">{{ buttons[1] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[2])"><div class="inner">{{ buttons[2] }}</div></div>
+          </div>
+          <div class="row">
+            <div class="button" (click)="buttonClick(buttons[3])"><div class="inner">{{ buttons[3] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[4])"><div class="inner">{{ buttons[4] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[5])"><div class="inner">{{ buttons[5] }}</div></div>
+          </div>
+          <div class="row">
+            <div class="button" (click)="buttonClick(buttons[6])"><div class="inner">{{ buttons[6] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[7])"><div class="inner">{{ buttons[7] }}</div></div>
+            <div class="button" (click)="buttonClick(buttons[8])"><div class="inner">{{ buttons[8] }}</div></div>
+          </div>
+          <div class="row">
+            <div class="button"><div class="inner">*</div></div>
+            <div class="button" (click)="buttonClick(buttons[9])"><div class="inner">{{ buttons[9] }}</div></div>
+            <div class="button"><div class="inner">#</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
