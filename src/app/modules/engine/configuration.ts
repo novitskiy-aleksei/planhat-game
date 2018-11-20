@@ -12,13 +12,27 @@ export const config = {
 
   customerGrowCalculationInterval: 30,
   customerCancellationCalculationInterval: 15,
-  customerUpgradePlanCalculationInterval: 15,
+  customerUpgradePlanCalculationInterval: 140,
   customerRequestFeatureCalculationInterval: 30,
   customerBugReportCalculationInterval: 30,
   customerSupportTicketCalculationInterval: 30,
   // ...
 
   customerGrowMinHealth: 3.6,
+
+  affections: {
+    positive: {
+      feature: 3,
+      meeting: 2,
+      ticket: 0.5,
+      cancellationWin: 1.5
+    },
+    negative: {
+      feature: 0.2,
+      bug: 1,
+      ticket: 0.5,
+    }
+  },
 
   plans: {
     basic: 3000,

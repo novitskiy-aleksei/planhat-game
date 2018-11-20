@@ -31,6 +31,9 @@ export class CustomersService {
       id: faker.random.uuid(),
       name: faker.name.firstName(),
       phone: faker.phone.phoneNumber(),
+      health: faker.random.number({min: 3, max: 5}),
+      touchedAt: faker.date.soon(3),
+      subscribedAt: faker.date.soon(3)
     });
   }
 
@@ -47,16 +50,14 @@ export class CustomersService {
   }
 
   avgHealth(): number {
-    const acc = 0;
-    this.list.reduce((undefined, c) => acc + c.health, acc);
-
+    let acc = 0;
+    this.list.forEach((c) => acc += c.health);
     return acc / this.count();
   }
 
   totalValue(): number {
-    const acc = 0;
-    this.list.reduce((undefined, c) => c.plan ? acc + c.plan.price : acc, acc);
-
+    let acc = 0;
+    this.list.forEach(c => c.plan ? acc += c.plan.price : acc);
     return acc;
   }
 
@@ -74,8 +75,8 @@ export class CustomersService {
   }
 
   valueLost(): number {
-    const acc = 0;
-    this.lost.reduce((undefined, c) => acc + c.prevPlan.price, acc);
+    let acc = 0;
+    this.lost.forEach(c => acc += c.prevPlan.price);
     return acc;
   }
 }

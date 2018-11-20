@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Emitter } from '../../../engine/services/emitter.service';
-import { Customer } from '../../../engine/models/customer';
-import { NewCustomerEvent } from '../../../engine/models/models';
-
-class LoggerItem {
-  constructor(public template: string, public customer: Customer) {}
-}
+import {
+  BugReportedEvent,
+  CancellationEvent,
+  FeatureRequestedEvent,
+  NewCustomerEvent,
+  PlanChangedEvent, SupportRequestEvent
+} from '../../../engine/models/models';
 
 @Component({
   selector: 'app-logger',
@@ -13,7 +14,7 @@ class LoggerItem {
   templateUrl: 'logger.component.html',
 })
 export class LoggerComponent implements OnInit {
-  items: LoggerItem[] = [];
+  items: string[] = [];
 
   constructor(private emitter: Emitter) {}
 
@@ -23,19 +24,32 @@ export class LoggerComponent implements OnInit {
 
   setupListeners() {
     this.emitter.on<NewCustomerEvent>(NewCustomerEvent.name).subscribe(event => {
-      this.addItem('Congratulations, you have new customer: {{customer}}!', event.customer);
+      this.addItem(`Congratulations, you have new customer: ${event.customer.name}!`);
     });
+    this.emitter.on<CancellationEvent>(CancellationEvent.name).subscribe(event => {
+      this.addItem(`Unfortunately, ${event.customer.name} want to unsubscribe`);
+    });
+    this.emitter.on<PlanChangedEvent>(PlanChangedEvent.name).subscribe(event => {
+      if (event.previousPlan) {
+        this.addItem(`${event.customer.name} has upgraded plan to ${event.customer.plan.type}`);
+      } else {
+        this.addItem(`${event.customer.name} downgraded plan to ${event.customer.plan.type}`);
+      }
+    });
+    this.emitter.on<FeatureRequestedEvent>(FeatureRequestedEvent.name).subscribe(event => {
+      this.addItem(`${event.customer.name} want to see new feature in your product`);
+    });
+    this.emitter.on<BugReportedEvent>(BugReportedEvent.name).subscribe(event => {
+      this.addItem(`${event.customer.name} found distressing bug in your product`);
+    });
+    this.emitter.on<SupportRequestEvent>(SupportRequestEvent.name).subscribe(event => {
+      this.addItem(`${event.customer.name} need support in using your product`);
+    });
+
   }
 
-  addItem(template, customer = null) {
-    this.items.push(new LoggerItem(template, customer));
+  addItem(template) {
+    this.items.push(template);
   }
 
-  formatItem(item: LoggerItem) {
-    let message = item.template;
-    if (item.customer) {
-      message = item.template.replace('{{customer}}', item.customer.name);
-    }
-    return message;
-  }
 }
