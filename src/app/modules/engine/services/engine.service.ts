@@ -88,6 +88,7 @@ export class EngineService {
   }
 
   private onTickedAnswered(customer: Customer) {
+    customer.questionsCount--;
     this.emitter.emit(
       CustomerChangedEvent.name,
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.ticket))
@@ -122,14 +123,21 @@ export class EngineService {
     if (!this.developerPool.hasAvailableDevelopers()) {
       return;
     }
+    task.durationInSecs = task.type === 'bug' ? config.bugFixDuration : config.buildFeatureDuration;
     const developer = this.developerPool.getAvaliableDeveloper();
     developer.task = task;
   }
 
   private onTaskFinished(developer: Developer) {
+    if (developer.task.type === 'bug') {
+      developer.task.customer.bugReportsCount--;
+    } else {
+      developer.task.customer.featureRequestsCount--;
+    }
     this.emitter.emit(
       CustomerChangedEvent.name,
-      new CustomerChangedEvent(developer.task.customer.increaseHealth(config.affections.positive.feature))
+      new CustomerChangedEvent(developer.task.customer.increaseHealth(
+        developer.task.type === 'bug' ? config.affections.positive.feature : config.affections.positive.bug))
     );
     developer.task = null;
   }
@@ -137,6 +145,7 @@ export class EngineService {
   private generateSupportTicketRequest() {
     this.customers.all().forEach(customer => {
       if (withChance(1.8)) {
+        customer.questionsCount++;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.ticket)));
         this.emitter.emit(SupportRequestEvent.name, new SupportRequestEvent(customer));
       }
@@ -146,6 +155,7 @@ export class EngineService {
   private generateBugReportFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        customer.bugReportsCount++;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.bug)));
         this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(new DeveloperTask('bug', customer)));
       }
@@ -155,6 +165,7 @@ export class EngineService {
   private generateFeatureRequestFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        customer.featureRequestsCount++;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.feature)));
         this.emitter.emit(FeatureRequestedEvent.name, new FeatureRequestedEvent(new DeveloperTask('feature', customer)));
       }

@@ -1,9 +1,8 @@
-<h2>{{ customer.name }}: <span style="color: red">{{ customer.health | number:'1.2' }}HP</span></h2>
+<h2>{{ customer.name }}: <b>{{ customer.health | number:'1.1' }}HP</b></h2>
 <div class="actions-container">
-  {{ customer | json }}
-  <button>Meeting</button>
-  <button>Meeting</button>
-
-  <button>Meeting</button>
-  <button>Meeting</button>
+  <button (click)="runInPersonMeeting()">Run an in-person meeting</button>
+  <button (click)="callOut()">Call out</button>
+  <button *ngIf="customer.bugReportsCount > 0 && haveFreeDevelopers" (click)="fixBug()">Fix a reported bug</button>
+  <button *ngIf="customer.featureRequestsCount > 0 && haveFreeDevelopers" (click)="buildFeature()">Build a requested feature</button>
+  <button *ngIf="customer.questionsCount > 0" (click)="answerQuestion()">Answer question</button>
 </div>

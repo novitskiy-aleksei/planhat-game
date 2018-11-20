@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Emitter } from '../../../engine/services/emitter.service';
 import { CustomerChangedEvent, NewCustomerEvent, TimeShiftedEvent } from '../../../engine/models/models';
@@ -17,6 +17,7 @@ class Position {
 })
 export class BoardComponent implements OnInit, OnDestroy {
 
+  @Output() call = new EventEmitter<Customer>();
   map = new Map();
   currentTime: Date;
   private subscribers: Subscription[] = [];
@@ -72,7 +73,11 @@ export class BoardComponent implements OnInit, OnDestroy {
     return  100 * diffDays / daysInMonth;
   }
 
-  openCustomerActionsModal(id: number, customer: Customer) {
+  callOut(customer: Customer) {
+    this.call.emit(customer);
+  }
+
+  openCustomerActionsModal(id: number) {
     this.modalService.open('customer-actions-' + id);
   }
 

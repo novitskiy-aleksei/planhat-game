@@ -10,21 +10,24 @@ export const config = {
   timeScale: 12960, // real seconds in one game second
   gameDuration:  600, // seconds
 
-  customerGrowCalculationInterval: 30,
-  customerCancellationCalculationInterval: 15,
-  customerUpgradePlanCalculationInterval: 140,
+  customerGrowCalculationInterval: 20,
+  customerCancellationCalculationInterval: 20,
+  customerUpgradePlanCalculationInterval: 30,
   customerRequestFeatureCalculationInterval: 30,
-  customerBugReportCalculationInterval: 30,
-  customerSupportTicketCalculationInterval: 30,
-  // ...
+  customerBugReportCalculationInterval: 20,
+  customerSupportTicketCalculationInterval: 15,
+
+  bugFixDuration: 5,
+  buildFeatureDuration: 12,
 
   customerGrowMinHealth: 3.6,
 
   affections: {
     positive: {
-      feature: 3,
+      feature: 3.5,
       meeting: 2,
       ticket: 0.5,
+      bug: 1.5,
       cancellationWin: 1.5
     },
     negative: {

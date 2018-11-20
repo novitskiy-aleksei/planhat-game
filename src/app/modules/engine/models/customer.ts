@@ -12,6 +12,9 @@ export class Customer extends Populated {
   plan: Plan;
   prevPlan: Plan;
   needsAttention = false;
+  bugReportsCount = 0;
+  featureRequestsCount = 0;
+  questionsCount = 0;
 
   constructor(data: any) {
     super(data);

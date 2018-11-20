@@ -46,8 +46,8 @@ export class PhoneMiniGameComponent implements OnInit {
   }
 
   generatePhone() {
-    const min = 100000000;
-    const max = 999999999;
+    const min = 1000000;
+    const max = 9999999;
     return String(Math.floor(Math.random() * (max - min) ) + min);
   }
 
