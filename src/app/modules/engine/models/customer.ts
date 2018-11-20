@@ -12,7 +12,9 @@ export class Customer extends Populated {
   touchedAt: Date;
   plan: Plan;
   prevPlan: Plan;
-  needsAttention = false;
+  bugReportsCount = 0;
+  featureRequestsCount = 0;
+  questionsCount = 0;
 
   constructor(data: any) {
     super(data);
@@ -59,6 +61,8 @@ export class Customer extends Populated {
   increaseHealth(amount: number): this {
     if ((this.health + amount) <= 5) {
       this.health += amount;
+    } else {
+      this.health = 5;
     }
 
     return this;

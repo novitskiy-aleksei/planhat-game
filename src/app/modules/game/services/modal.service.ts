@@ -16,6 +16,7 @@ export class ModalService {
 
   open(id: string) {
     // open modal specified by id
+    this.modals.forEach(x => this.close(x.id));
     const modal: any = this.modals.filter(x => x.id === id)[0];
     modal.open();
   }

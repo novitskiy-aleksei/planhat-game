@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Emitter } from '../../../engine/services/emitter.service';
 import { CustomerChangedEvent, GameTimeEvent, NewCustomerEvent } from '../../../engine/models/models';
@@ -14,6 +14,7 @@ import { ModalService } from '../../services/modal.service';
 })
 export class BoardComponent implements OnInit, OnDestroy {
 
+  @Output() call = new EventEmitter<Customer>();
   map = new Map();
   gameStartAt: Date;
   private subscribers: Subscription[] = [];
@@ -74,6 +75,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     return 100 * diffDays / daysInMonth;
+  }
+
+  callOut(customer: Customer) {
+    this.call.emit(customer);
   }
 
   openCustomerActionsModal(id: number, customer: Customer) {

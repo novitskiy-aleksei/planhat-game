@@ -4,9 +4,10 @@
                   'transition': 'all ' + map.get(customer).transition + 's' + ' cubic-bezier(1, 1, 0, 0) 0s'
               }"
               [health]="customer.health"></app-customer>
+
 <!-- Don't try this at home. It's really bad -->
 <ng-container *ngFor="let customer of getCustomers(map); let i = index;">
   <app-modal id="customer-actions-{{ i }}">
-    <app-customer-actions [customer]="customer"></app-customer-actions>
+    <app-customer-actions [customer]="customer" (call)="callOut(customer)"></app-customer-actions>
   </app-modal>
 </ng-container>
