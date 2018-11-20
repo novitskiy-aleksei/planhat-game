@@ -8,6 +8,7 @@ import { GamePanelModule } from '../game-panel/game-panel.module';
 import { ModalComponent } from './components/modal/modal.component';
 import { ModalService } from './services/modal.service';
 import { PhoneMiniGameModule } from '../phone-minigame/phone-minigame.module';
+import { CustomerActionsComponent } from './components/customer-actions/customer-actions.component';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { PhoneMiniGameModule } from '../phone-minigame/phone-minigame.module';
     TimelineComponent,
     CustomerComponent,
     ModalComponent,
+    CustomerActionsComponent,
   ],
   providers: [
     ModalService,

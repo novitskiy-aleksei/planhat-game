@@ -5,6 +5,7 @@ import { CustomerChangedEvent, GameTimeEvent, NewCustomerEvent } from '../../../
 import { Customer } from '../../../engine/models/customer';
 import { config } from '../../../engine/configuration';
 import { Transform } from '../../models/transform';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-board',
@@ -17,7 +18,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   gameStartAt: Date;
   private subscribers: Subscription[] = [];
 
-  constructor(private emitter: Emitter, private elementRef: ElementRef) {
+  constructor(private emitter: Emitter, private elementRef: ElementRef, private modalService: ModalService) {
   }
 
   get currentTime() {
@@ -73,6 +74,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     return 100 * diffDays / daysInMonth;
+  }
+
+  openCustomerActionsModal(id: number, customer: Customer) {
+    this.modalService.open('customer-actions-' + id);
   }
 
   ngOnDestroy(): void {

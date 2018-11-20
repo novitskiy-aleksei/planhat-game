@@ -82,7 +82,9 @@ export class GameStatsEvent extends EngineEvent {
   constructor(public stats: GameStats) {
     super();
   }
+}
 
+export class GameEnded extends EngineEvent {
 }
 // ######################################################
 // ### From game to engine
@@ -117,7 +119,7 @@ export class TaskFinishedEvent extends EngineEvent {
 // ######################################################
 
 export class AssignTaskEvent extends EngineEvent {
-  constructor(public task: Task) {
+  constructor(public task: DeveloperTask) {
     super();
   }
 }

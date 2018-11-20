@@ -39,10 +39,10 @@ export class LoggerComponent implements OnInit {
       }
     });
     this.emitter.on<FeatureRequestedEvent>(FeatureRequestedEvent.name).subscribe(event => {
-      this.addItem(`${event.customer.name} want to see new feature in your product`);
+      this.addItem(`${event.task.customer.name} want to see new feature in your product`);
     });
     this.emitter.on<BugReportedEvent>(BugReportedEvent.name).subscribe(event => {
-      this.addItem(`${event.customer.name} found distressing bug in your product`);
+      this.addItem(`${event.task.customer.name} found distressing bug in your product`);
     });
     this.emitter.on<SupportRequestEvent>(SupportRequestEvent.name).subscribe(event => {
       this.addItem(`${event.customer.name} need support in using your product`);

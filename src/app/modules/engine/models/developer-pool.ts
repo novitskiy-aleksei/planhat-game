@@ -3,7 +3,7 @@ import { Developer } from './developer';
 export class DeveloperPool {
   developers: Developer[] = [];
 
-  constructor(size) {
+  constructor(size: number) {
     for (let i = 0; i < size; i++) {
       this.developers.push(new Developer());
     }
