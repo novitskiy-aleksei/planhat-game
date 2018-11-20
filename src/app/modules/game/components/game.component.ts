@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalService } from '../services/modal.service';
 
 @Component({
-  selector: 'app-components',
+  selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
 
-  constructor() { }
+  constructor(private modalService: ModalService) { }
 
   ngOnInit() {
+  }
+
+  openModal() {
+    this.modalService.open('phone-minigame-modal');
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../auth/auth.service';
-import { Player } from '../../../auth/player';
+import { AuthService } from '../../../utils/auth.service';
+import { Player } from '../../engine/models/player';
 
 @Component({
   selector: 'app-welcome',
