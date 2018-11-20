@@ -101,9 +101,11 @@ export class EngineService {
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.cancellationWin))
     );
   }
+
   private gameDurationCheck(current: Date, gameStarted: Date) {
-    if ((gameStarted.getTime() - Date.now()) / 100 > config.gameDuration) {
+    if ((new Date().getTime() - gameStarted.getTime()) / 1000 > config.gameDuration) {
       this.emitter.emit(GameEnded.name, new GameEnded());
+      this.customers.clear();
     }
   }
 

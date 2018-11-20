@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Customer } from '../models/customer';
 import * as faker from 'faker';
-import { MonthStats, NewCustomerEvent } from '../models/models';
+import { NewCustomerEvent } from '../models/models';
 import { Emitter } from './emitter.service';
 
 @Injectable()
@@ -78,5 +78,10 @@ export class CustomersService {
     let acc = 0;
     this.lost.forEach(c => acc += c.prevPlan.price);
     return acc;
+  }
+
+  clear() {
+    this.list = [];
+    this.lost = [];
   }
 }
