@@ -1,7 +1,8 @@
+import { Customer } from './customer';
 export class DeveloperTask {
   startedAt: Date;
 
-  constructor(public durationInMs: number) {
+  constructor(public type: 'bug' | 'feature', public customer: Customer, public durationInMs = 0) {
     this.startedAt = new Date();
   }
 

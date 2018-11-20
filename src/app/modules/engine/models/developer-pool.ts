@@ -9,7 +9,15 @@ export class DeveloperPool {
     }
   }
 
-  hasAvailableDeveloper() {
-    return this.developers.filter(developer => !developer.task).length > 0;
+  hasAvailableDevelopers() {
+    return this.developers.filter(d => !d.task).length > 0;
+  }
+
+  getAvaliableDeveloper() {
+    const freeDevelopers = this.developers.filter(d => !d.task);
+    if (!freeDevelopers.length) {
+      return;
+    }
+    return freeDevelopers[0];
   }
 }

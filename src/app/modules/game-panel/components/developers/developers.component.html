@@ -8,9 +8,12 @@
       <div class="marker in-progress" *ngIf="developer.task && !developer.task.isFinished()">
         Work in progress
       </div>
-      <div class="finished-button" *ngIf="developer.task && developer.task.isFinished()">
+      <div class="finished-button" *ngIf="developer.task && developer.task.isFinished()" (click)="deliverToClient(developer)">
         Deliver to client
       </div>
     </div>
   </div>
+</div>
+<div class="label">
+  Developers
 </div>

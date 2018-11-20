@@ -1,9 +1,9 @@
 import { Customer } from './customer';
 import { Plan } from './plan';
-import { Task } from './task';
 import { Developer } from './developer';
 import { EngineEvent } from './engine-event.abstract';
 import { GameStats } from './game-stats';
+import { DeveloperTask } from './developer-task';
 
 // ######################################################
 // ### From engine to game
@@ -33,7 +33,7 @@ export class CustomerLostEvent extends EngineEvent {
 }
 
 export class FeatureRequestedEvent extends EngineEvent {
-  constructor(public customer: Customer, public task: Task) {
+  constructor(public task: DeveloperTask) {
     super();
   }
 }
@@ -45,7 +45,7 @@ export class SupportRequestEvent extends EngineEvent {
 }
 
 export class BugReportedEvent extends EngineEvent {
-  constructor(public customer: Customer, public task: Task) {
+  constructor(public task: DeveloperTask) {
     super();
   }
 }
@@ -107,7 +107,7 @@ export class WonBackCancellationEvent extends EngineEvent {
 }
 
 export class TaskFinishedEvent extends EngineEvent {
-  constructor(public customer: Customer, public task: Task) {
+  constructor(public developer: Developer) {
     super();
   }
 }
@@ -117,13 +117,13 @@ export class TaskFinishedEvent extends EngineEvent {
 // ######################################################
 
 export class AssignTaskEvent extends EngineEvent {
-  constructor(public customer: Customer, public developer: Developer, task: Task) {
+  constructor(public task: Task) {
     super();
   }
 }
 
 export class DeveloperFinishedWorkEvent extends EngineEvent {
-  constructor(public customer: Customer, public developer: Developer, task: Task) {
+  constructor(public developer: Developer) {
     super();
   }
 }

@@ -6,15 +6,15 @@ import {
   AnsweredTicketEvent, GameTimeEvent, BugReportedEvent, CancellationEvent, CustomerChangedEvent, FeatureRequestedEvent, GameStatsEvent,
   HeldMeetingEvent, MonthEndedEvent, MonthStats,
   NewCustomerEvent, PlanChangedEvent, SupportRequestEvent,
-  TaskFinishedEvent, TimeShiftedEvent,
-  WonBackCancellationEvent
+  TimeShiftedEvent, WonBackCancellationEvent
 } from '../models/models';
-import { Task } from '../models/task';
 import { withChance } from '../../../utils/chance';
 import { Plan } from '../models/plan';
 import { GameStats } from '../models/game-stats';
 import { CustomersService } from './customers.service';
 import { DeveloperPool } from '../models/developer-pool';
+import { AssignTaskEvent, TaskFinishedEvent } from '../models/models';
+import { DeveloperTask } from '../models/developer-task';
 import { Developer } from '../models/developer';
 
 @Injectable()
@@ -26,7 +26,6 @@ export class EngineService {
   constructor(private emitter: Emitter, private customers: CustomersService) {}
 
   initGameData() {
-    console.log('DEVELOPERS:', this.developerPool.developers);
     this.startedAt = new Date();
     this.customers.generate(config.customersStartCount);
     this.setupListeners();
@@ -41,8 +40,9 @@ export class EngineService {
     this.emitter.on<HeldMeetingEvent>(HeldMeetingEvent.name).subscribe(e => this.onMeetingHeld(e.customer));
     this.emitter.on<AnsweredTicketEvent>(AnsweredTicketEvent.name).subscribe(e => this.onTickedAnswered(e.customer));
     this.emitter.on<WonBackCancellationEvent>(WonBackCancellationEvent.name).subscribe(e => this.onCancellationWin(e.customer));
-    this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.customer, e.task));
     this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => this.onMonthEndCheck(e.current, e.gameStarted));
+    this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.developer));
+    this.emitter.on<AssignTaskEvent>(AssignTaskEvent.name).subscribe(e => this.onAssignTask(e.task));
 
     setInterval(() => this.tick(), config.tickInterval);
     setInterval(() => this.generateCustomerGrow(), config.customerGrowCalculationInterval * 100);
@@ -100,13 +100,6 @@ export class EngineService {
     );
   }
 
-  private onTaskFinished(customer: Customer, task: Task) {
-    this.emitter.emit(
-      CustomerChangedEvent.name,
-      new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.feature))
-    );
-  }
-
   private onMonthEndCheck(current: Date, gameStarted: Date) {
     const monthDiff = (current.getTime() - gameStarted.getTime()) / 1000 / 60 / 60 / 24 / 30;
     if (this.monthsPassed < monthDiff) {
@@ -117,6 +110,22 @@ export class EngineService {
         this.customers.valueLost()
       )));
     }
+  }
+
+  private onAssignTask(task: DeveloperTask) {
+    if (!this.developerPool.hasAvailableDevelopers()) {
+      return;
+    }
+    const developer = this.developerPool.getAvaliableDeveloper();
+    developer.task = task;
+  }
+
+  private onTaskFinished(developer: Developer) {
+    this.emitter.emit(
+      CustomerChangedEvent.name,
+      new CustomerChangedEvent(developer.task.customer.increaseHealth(config.affections.positive.feature))
+    );
+    developer.task = null;
   }
 
   private generateSupportTicketRequest() {
@@ -132,7 +141,7 @@ export class EngineService {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.bug)));
-        this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(customer, new Task('bug')));
+        this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(new DeveloperTask('bug', customer)));
       }
     });
   }
@@ -141,7 +150,7 @@ export class EngineService {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.feature)));
-        this.emitter.emit(FeatureRequestedEvent.name, new FeatureRequestedEvent(customer, new Task('feature')));
+        this.emitter.emit(FeatureRequestedEvent.name, new FeatureRequestedEvent(new DeveloperTask('feature', customer)));
       }
     });
   }
