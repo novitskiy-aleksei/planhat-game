@@ -56,7 +56,7 @@ export class EngineService {
     setInterval(() => this.generateSupportTicketRequest(), config.customerSupportTicketCalculationInterval * 100);
   }
 
-  tick() {
+  private tick() {
     // time translation
     const tick = Math.round((Date.now() - this.startedAt.getTime()) / 1000 * config.timeScale) * 1000;
     this.emitter.emit(
@@ -82,47 +82,62 @@ export class EngineService {
     });
   }
 
-  onMeetingHeld(customer: Customer) {
-    console.log('meeting');
+  private onMeetingHeld(customer: Customer) {
+    this.emitter.emit(
+      CustomerChangedEvent.name,
+      new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.meeting))
+    );
   }
 
-  onTickedAnswered(customer: Customer) {
-    console.log('onTickedAnswered');
+  private onTickedAnswered(customer: Customer) {
+    this.emitter.emit(
+      CustomerChangedEvent.name,
+      new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.ticket))
+    );
   }
 
-  onCancellationWin(customer: Customer) {
-    console.log('onCancellationWin');
+  private onCancellationWin(customer: Customer) {
+    this.emitter.emit(
+      CustomerChangedEvent.name,
+      new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.cancellationWin))
+    );
   }
 
-  onTaskFinished(customer: Customer, task: Task) {
-    console.log('onTaskFinished');
+  private onTaskFinished(customer: Customer, task: Task) {
+    this.emitter.emit(
+      CustomerChangedEvent.name,
+      new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.feature))
+    );
   }
 
-  generateSupportTicketRequest() {
+  private generateSupportTicketRequest() {
     this.customers.all().forEach(customer => {
       if (withChance(1.8)) {
+        this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.ticket)));
         this.emitter.emit(SupportRequestEvent.name, new SupportRequestEvent(customer));
       }
     });
   }
 
-  generateBugReportFeature() {
+  private generateBugReportFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.bug)));
         this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(customer, new Task('feature')));
       }
     });
   }
 
-  generateFeatureRequestFeature() {
+  private generateFeatureRequestFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.feature)));
         this.emitter.emit(FeatureRequestedEvent.name, new FeatureRequestedEvent(customer, new Task('feature')));
       }
     });
   }
 
-  generateUpgradePlan() {
+  private generateUpgradePlan() {
     this.customers.all().forEach(customer => {
       if (withChance((customer.health / 70) * 100) && customer.plan && customer.plan.type !== Plan.PRO) {
         const prev = customer.plan;
@@ -132,7 +147,7 @@ export class EngineService {
     });
   }
 
-  generateCancellation() {
+  private generateCancellation() {
     this.customers.all().forEach(customer => {
       if (withChance((customer.health - config.customerMaxHealth) * -0.1)) {
         customer.plan = null;
@@ -141,19 +156,14 @@ export class EngineService {
     });
   }
 
-  generateCustomerGrow() {
+  private generateCustomerGrow() {
     this.customers.all().forEach(customer => {
       if (customer.health < config.customerGrowMinHealth) {
         return;
       }
 
       if (withChance((customer.health / 140) * 100) && this.customers.count() < config.customersMaxCount) {
-        const invitedCustomer = new Customer({
-          id: faker.random.uuid(),
-          name: faker.name.firstName(),
-          phone: faker.phone.phoneNumber(),
-        });
-
+        const invitedCustomer = this.customers.createOne();
         this.customers.add(invitedCustomer);
         this.emitter.emit(NewCustomerEvent.name, new NewCustomerEvent(invitedCustomer));
       }
