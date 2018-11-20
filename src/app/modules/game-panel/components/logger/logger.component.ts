@@ -14,6 +14,7 @@ import {
   templateUrl: 'logger.component.html',
 })
 export class LoggerComponent implements OnInit {
+  private maxItems = 10;
   items: string[] = [];
 
   constructor(private emitter: Emitter) {}

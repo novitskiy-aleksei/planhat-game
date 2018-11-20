@@ -32,8 +32,8 @@ export class CustomersService {
       name: faker.name.firstName(),
       phone: faker.phone.phoneNumber(),
       health: faker.random.number({min: 3, max: 5}),
-      touchedAt: faker.date.soon(3),
-      subscribedAt: faker.date.soon(3)
+      touchedAt: faker.date.soon(15),
+      subscribedAt: faker.date.soon(15)
     });
   }
 
@@ -42,7 +42,7 @@ export class CustomersService {
   }
 
   remove(customerId: string) {
-    this.list.splice(this.list.findIndex(c => c.id === customerId));
+    this.list.splice(this.list.findIndex(c => c.id === customerId), 1);
   }
 
   count(): number {

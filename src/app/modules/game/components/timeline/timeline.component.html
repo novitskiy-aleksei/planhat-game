@@ -1,21 +1,5 @@
-<ol>
-  <li>
-    <p class="diplome">BAC S</p>
-    <span class="point"></span>
-  </li>
-  <li>
-    <p class="diplome">BTS / DUT</p>
-    <span class="point"></span>
-  </li>
-  <li>
-    <p class="diplome">Licence</p>
-    <span class="point"></span>
-  </li>
-  <li>
-    <p class="diplome">Master</p>
-    <span class="point"></span>
-  <li>
-    <p class="diplome">Doctorat</p>
-    <span class="point"></span>
-  </li>
-</ol>
+<div>
+  <span *ngFor="let date of dates; index as i">
+    {{date.toLocaleDateString('en-US')}}
+  </span>
+</div>

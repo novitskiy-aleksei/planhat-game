@@ -3,7 +3,7 @@ import { Customer } from '../models/customer';
 import { config } from '../configuration';
 import { Injectable } from '@angular/core';
 import {
-  AnsweredTicketEvent, BugReportedEvent, CancellationEvent, CustomerChangedEvent, FeatureRequestedEvent, GameStatsEvent,
+  AnsweredTicketEvent, GameTimeEvent, BugReportedEvent, CancellationEvent, CustomerChangedEvent, FeatureRequestedEvent, GameStatsEvent,
   HeldMeetingEvent, MonthEndedEvent, MonthStats,
   NewCustomerEvent, PlanChangedEvent, SupportRequestEvent,
   TaskFinishedEvent, TimeShiftedEvent,
@@ -30,6 +30,11 @@ export class EngineService {
     this.startedAt = new Date();
     this.customers.generate(config.customersStartCount);
     this.setupListeners();
+
+    this.emitter.emit(
+      GameTimeEvent.name,
+      new GameTimeEvent(this.startedAt, new Date(this.startedAt.getTime() + (config.gameDuration * config.timeScale) * 1000))
+    );
   }
 
   setupListeners() {
@@ -53,7 +58,7 @@ export class EngineService {
     const tick = Math.round((Date.now() - this.startedAt.getTime()) / 1000 * config.timeScale) * 1000;
     this.emitter.emit(
       TimeShiftedEvent.name,
-      new TimeShiftedEvent(new Date(Date.now() + tick), this.startedAt, config.gameDuration * config.timeScale)
+      new TimeShiftedEvent(new Date(Date.now() + tick), this.startedAt)
     );
 
     // generate game stats
