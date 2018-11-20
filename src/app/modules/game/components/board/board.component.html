@@ -1,3 +1,4 @@
-<p>
-  board works!
-</p>
+<app-customer *ngFor="let customer of getKeys(map);"
+              [ngStyle]="{'transform': 'translate(' + map.get(customer).x + 'px, ' + map.get(customer).y + 'px)'}"
+              [customer]="customer"></app-customer>
+

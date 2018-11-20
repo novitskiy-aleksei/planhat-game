@@ -56,8 +56,14 @@ export class CustomerChangedEvent extends EngineEvent {
   }
 }
 
+export class GameTimeEvent extends EngineEvent {
+  constructor(public start: Date, public end: Date) {
+    super();
+  }
+}
+
 export class TimeShiftedEvent extends EngineEvent {
-  constructor(public current: Date, public gameStarted: Date, public gameDuration: number) {
+  constructor(public current: Date, public gameStarted: Date) {
     super();
   }
 }
@@ -78,9 +84,9 @@ export class GameStatsEvent extends EngineEvent {
   }
 
 }
-//######################################################
-//### From game to engine
-//######################################################
+// ######################################################
+// ### From game to engine
+// ######################################################
 
 export class HeldMeetingEvent extends EngineEvent {
   constructor(public customer: Customer) {
@@ -106,9 +112,9 @@ export class TaskFinishedEvent extends EngineEvent {
   }
 }
 
-//######################################################
-//### In game events
-//######################################################
+// ######################################################
+// ### In game events
+// ######################################################
 
 export class AssignTaskEvent extends EngineEvent {
   constructor(public customer: Customer, public developer: Developer, task: Task) {

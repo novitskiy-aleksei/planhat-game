@@ -1,0 +1,16 @@
+:host {
+  overflow: hidden;
+  & > div {
+    display: flex;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin: 10px;
+    span {
+      display: inline-block;
+      div {
+        padding: 10px 5px;
+        border-left: 1px solid black;
+      }
+    }
+  }
+}
