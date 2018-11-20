@@ -4,7 +4,7 @@ import { config } from '../configuration';
 import { Injectable } from '@angular/core';
 import {
   AnsweredTicketEvent, BugReportedEvent, CancellationEvent, CustomerChangedEvent, FeatureRequestedEvent, GameStatsEvent,
-  HeldMeetingEvent,
+  HeldMeetingEvent, MonthEndedEvent, MonthStats,
   NewCustomerEvent, PlanChangedEvent, SupportRequestEvent,
   TaskFinishedEvent, TimeShiftedEvent,
   WonBackCancellationEvent
@@ -19,6 +19,7 @@ import { CustomersService } from './customers.service';
 @Injectable()
 export class EngineService {
   private startedAt: Date;
+  private monthsPassed = 1;
 
   constructor(private emitter: Emitter,
               private customers: CustomersService) {}
@@ -34,6 +35,17 @@ export class EngineService {
     this.emitter.on<AnsweredTicketEvent>(AnsweredTicketEvent.name).subscribe(e => this.onTickedAnswered(e.customer));
     this.emitter.on<WonBackCancellationEvent>(WonBackCancellationEvent.name).subscribe(e => this.onCancellationWin(e.customer));
     this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.customer, e.task));
+    this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => {
+      const monthDiff = (e.current.getTime() - e.gameStarted.getTime()) / 1000 / 60 / 60 / 24 / 30;
+      if (this.monthsPassed < monthDiff) {
+        this.monthsPassed++;
+        this.customers.closeMonth();
+        this.emitter.emit(MonthEndedEvent.name, new MonthEndedEvent(new MonthStats(
+          this.customers.customersLost(),
+          this.customers.valueLost()
+        )));
+      }
+    });
 
     setInterval(() => this.tick(), config.tickInterval);
     setInterval(() => this.generateCustomerGrow(), config.customerGrowCalculationInterval * 100);
@@ -62,15 +74,12 @@ export class EngineService {
     // calculate customers health
     this.customers.all().forEach(customer => {
       if (!customer.reduceHealth(config.reduceHpPerTick).isAlive()) {
+        customer.prevPlan = Object.assign({}, customer.plan);
         customer.plan = null;
         this.emitter.emit(CancellationEvent.name, new CancellationEvent(customer));
       }
-
       this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer));
     });
-
-    // calculate customer lost //every month
-    // generate month ended //eventy month
   }
 
   onMeetingHeld(customer: Customer) {
@@ -115,7 +124,7 @@ export class EngineService {
 
   generateUpgradePlan() {
     this.customers.all().forEach(customer => {
-      if (withChance((customer.health / 70) * 100) && customer.plan.type !== Plan.PRO) {
+      if (withChance((customer.health / 70) * 100) && customer.plan && customer.plan.type !== Plan.PRO) {
         const prev = customer.plan;
         customer.upgradePlan();
         this.emitter.emit(PlanChangedEvent.name, new PlanChangedEvent(customer, prev));
@@ -138,7 +147,7 @@ export class EngineService {
         return;
       }
 
-      if (withChance((customer.health / 70) * 100)) {
+      if (withChance((customer.health / 140) * 100) && this.customers.count() < config.customersMaxCount) {
         const invitedCustomer = new Customer({
           id: faker.random.uuid(),
           name: faker.name.firstName(),

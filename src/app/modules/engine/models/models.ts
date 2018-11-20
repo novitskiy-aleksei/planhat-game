@@ -63,8 +63,7 @@ export class TimeShiftedEvent extends EngineEvent {
 }
 
 export class MonthStats {
-  customerCharn: number;
-  valueGrossCharn: number;
+  constructor(public customerCharn: number, public valueGrossCharn: number) {}
 }
 
 export class MonthEndedEvent extends EngineEvent {
