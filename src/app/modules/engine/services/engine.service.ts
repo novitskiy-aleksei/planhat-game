@@ -81,6 +81,7 @@ export class EngineService {
   }
 
   private onMeetingHeld(customer: Customer) {
+    customer.needsAttention = false;
     this.emitter.emit(
       CustomerChangedEvent.name,
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.meeting))
@@ -88,6 +89,7 @@ export class EngineService {
   }
 
   private onTickedAnswered(customer: Customer) {
+    customer.needsAttention = false;
     this.emitter.emit(
       CustomerChangedEvent.name,
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.ticket))
@@ -95,14 +97,17 @@ export class EngineService {
   }
 
   private onCancellationWin(customer: Customer) {
+    customer.needsAttention = false;
     this.emitter.emit(
       CustomerChangedEvent.name,
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.cancellationWin))
     );
   }
+
   private gameDurationCheck(current: Date, gameStarted: Date) {
-    if ((gameStarted.getTime() - Date.now()) / 100 > config.gameDuration) {
+    if ((new Date().getTime() - gameStarted.getTime()) / 1000 > config.gameDuration) {
       this.emitter.emit(GameEnded.name, new GameEnded());
+      this.customers.clear();
     }
   }
 
@@ -127,6 +132,7 @@ export class EngineService {
   }
 
   private onTaskFinished(developer: Developer) {
+    developer.task.customer.needsAttention = false;
     this.emitter.emit(
       CustomerChangedEvent.name,
       new CustomerChangedEvent(developer.task.customer.increaseHealth(config.affections.positive.feature))
@@ -136,7 +142,8 @@ export class EngineService {
 
   private generateSupportTicketRequest() {
     this.customers.all().forEach(customer => {
-      if (withChance(1.8)) {
+      if (withChance(0.8)) {
+        customer.needsAttention = true;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.ticket)));
         this.emitter.emit(SupportRequestEvent.name, new SupportRequestEvent(customer));
       }
@@ -146,6 +153,7 @@ export class EngineService {
   private generateBugReportFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        customer.needsAttention = true;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.bug)));
         this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(new DeveloperTask('bug', customer)));
       }
@@ -155,6 +163,7 @@ export class EngineService {
   private generateFeatureRequestFeature() {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
+        customer.needsAttention = true;
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.feature)));
         this.emitter.emit(FeatureRequestedEvent.name, new FeatureRequestedEvent(new DeveloperTask('feature', customer)));
       }
