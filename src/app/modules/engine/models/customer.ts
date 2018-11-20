@@ -38,12 +38,18 @@ export class Customer extends Populated {
   }
 
   reduceHealth(amount: number): this {
-    this.health -= amount;
+    if ((this.health - amount) >= 0) {
+      this.health -= amount;
+    }
+
     return this;
   }
 
   increaseHealth(amount: number): this {
-    this.health += amount;
+    if ((this.health + amount) <= 5) {
+      this.health += amount;
+    }
+
     return this;
   }
 
