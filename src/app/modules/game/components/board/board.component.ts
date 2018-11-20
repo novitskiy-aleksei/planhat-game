@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { Emitter } from '../../../engine/services/emitter.service';
 import { CustomerChangedEvent, NewCustomerEvent, TimeShiftedEvent } from '../../../engine/models/models';
 import { Customer } from '../../../engine/models/customer';
+import { ModalService } from '../../services/modal.service';
 
 class Position {
   constructor(public x: number, public y: number) {
@@ -20,7 +21,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   currentTime: Date;
   private subscribers: Subscription[] = [];
 
-  constructor(private emitter: Emitter) {
+  constructor(private emitter: Emitter,
+              private modalService: ModalService) {
   }
 
   ngOnInit() {
@@ -68,6 +70,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     return  100 * diffDays / daysInMonth;
+  }
+
+  openCustomerActionsModal(id: number, customer: Customer) {
+    this.modalService.open('customer-actions-' + id);
   }
 
   ngOnDestroy(): void {

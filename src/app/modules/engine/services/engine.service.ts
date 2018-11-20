@@ -6,7 +6,7 @@ import {
   AnsweredTicketEvent, GameTimeEvent, BugReportedEvent, CancellationEvent, CustomerChangedEvent, FeatureRequestedEvent, GameStatsEvent,
   HeldMeetingEvent, MonthEndedEvent, MonthStats,
   NewCustomerEvent, PlanChangedEvent, SupportRequestEvent,
-  TimeShiftedEvent, WonBackCancellationEvent
+  TimeShiftedEvent, WonBackCancellationEvent, GameEnded
 } from '../models/models';
 import { withChance } from '../../../utils/chance';
 import { Plan } from '../models/plan';
@@ -43,6 +43,7 @@ export class EngineService {
     this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => this.onMonthEndCheck(e.current, e.gameStarted));
     this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.developer));
     this.emitter.on<AssignTaskEvent>(AssignTaskEvent.name).subscribe(e => this.onAssignTask(e.task));
+    this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => this.gameDurationCheck(e.current, e.gameStarted));
 
     setInterval(() => this.tick(), config.tickInterval);
     setInterval(() => this.generateCustomerGrow(), config.customerGrowCalculationInterval * 100);
@@ -98,6 +99,11 @@ export class EngineService {
       CustomerChangedEvent.name,
       new CustomerChangedEvent(customer.increaseHealth(config.affections.positive.cancellationWin))
     );
+  }
+  private gameDurationCheck(current: Date, gameStarted: Date) {
+    if ((gameStarted.getTime() - Date.now()) / 100 > config.gameDuration) {
+      this.emitter.emit(GameEnded.name, new GameEnded());
+    }
   }
 
   private onMonthEndCheck(current: Date, gameStarted: Date) {

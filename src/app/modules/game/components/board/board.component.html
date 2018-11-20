@@ -1,4 +1,12 @@
-<app-customer *ngFor="let customer of getKeys(map);"
+<app-customer *ngFor="let customer of getKeys(map); let i = index"
               [ngStyle]="{'transform': 'translate(' + map.get(customer).x + 'px, ' + map.get(customer).y + 'px)'}"
-              [customer]="customer"></app-customer>
+              [customer]="customer"
+              (click)="openCustomerActionsModal(i, customer)"
+></app-customer>
 
+<!-- Don't try this at home. It's really bad -->
+<ng-container *ngFor="let customer of getKeys(map); let i = index;">
+  <app-modal id="customer-actions-{{ i }}">
+    <app-customer-actions [customer]="customer"></app-customer-actions>
+  </app-modal>
+</ng-container>
