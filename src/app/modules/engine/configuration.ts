@@ -7,7 +7,7 @@ export const config = {
 
   customersStartCount: 5,
   customersMaxCount: 30,
-  timeScale: 12960, // real seconds in one game second
+  timeScale: 129600, // real seconds in one game second
   gameDuration:  600, // seconds
 
   customerGrowCalculationInterval: 30,

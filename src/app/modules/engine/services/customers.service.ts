@@ -18,7 +18,7 @@ export class CustomersService {
 
   generate(count: number): Customer[] {
     for (let i = 0; i < count; i++) {
-      const customer = this.createOne();
+      const customer = this.createAtStartOne();
       this.list.push(customer);
       this.emitter.emit(NewCustomerEvent.name, new NewCustomerEvent(customer));
     }
@@ -26,14 +26,25 @@ export class CustomersService {
     return this.list;
   }
 
-  createOne(): Customer {
+  createAtStartOne(): Customer {
     return new Customer({
       id: faker.random.uuid(),
       name: faker.name.firstName(),
       phone: faker.phone.phoneNumber(),
       health: faker.random.number({min: 3, max: 5}),
-      touchedAt: faker.date.soon(15),
-      subscribedAt: faker.date.soon(15)
+      touchedAt: faker.date.soon(-30),
+      subscribedAt: faker.date.soon(-30)
+    });
+  }
+
+  createOne(): Customer {
+    return new Customer({
+      id: faker.random.uuid(),
+      name: faker.name.firstName(),
+      phone: faker.phone.phoneNumber(),
+      health: faker.random.number({min: 4, max: 4}),
+      touchedAt: faker.date.soon(0),
+      subscribedAt: faker.date.soon(0)
     });
   }
 

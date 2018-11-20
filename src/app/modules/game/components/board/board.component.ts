@@ -1,13 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Emitter } from '../../../engine/services/emitter.service';
-import { CustomerChangedEvent, NewCustomerEvent, TimeShiftedEvent } from '../../../engine/models/models';
+import { CustomerChangedEvent, GameTimeEvent, NewCustomerEvent } from '../../../engine/models/models';
 import { Customer } from '../../../engine/models/customer';
-
-class Position {
-  constructor(public x: number, public y: number) {
-  }
-}
+import { config } from '../../../engine/configuration';
+import { Transform } from '../../models/transform';
 
 @Component({
   selector: 'app-board',
@@ -17,57 +14,65 @@ class Position {
 export class BoardComponent implements OnInit, OnDestroy {
 
   map = new Map();
-  currentTime: Date;
+  gameStartAt: Date;
   private subscribers: Subscription[] = [];
 
-  constructor(private emitter: Emitter) {
+  constructor(private emitter: Emitter, private elementRef: ElementRef) {
+  }
+
+  get currentTime() {
+    const tick = Math.round((Date.now() - this.gameStartAt.getTime()) / 1000 * config.timeScale) * 1000;
+
+    return new Date(Date.now() + tick);
   }
 
   ngOnInit() {
     this.subscribers.push(
+      this.emitter.on(GameTimeEvent.name).subscribe((e: GameTimeEvent) => {
+        this.gameStartAt = e.start;
+      })
+    );
+    this.subscribers.push(
       this.emitter.on(NewCustomerEvent.name).subscribe((e: NewCustomerEvent) => {
-        this.map.set(e.customer, this.calculatePosition(e.customer));
+        this.map.set(e.customer, this.calculateTransform(e.customer));
+        setTimeout(() => {
+          const v = this.map.get(e.customer);
+          v.x = 0;
+        }, 0);
       })
     );
     this.subscribers.push(
       this.emitter.on(CustomerChangedEvent.name).subscribe((e: CustomerChangedEvent) => {
-        this.map.set(e.customer, this.calculatePosition(e.customer));
-      })
-    );
-    this.subscribers.push(
-      this.emitter.on(TimeShiftedEvent.name).subscribe((e: TimeShiftedEvent) => {
-        this.currentTime = e.current;
-        this.map.forEach((oldPosition, customer) => {
-          this.map.set(customer, this.calculatePosition(customer));
-        });
+        if (this.map.get(e.customer)) {
+          return null;
+        }
+        this.map.set(e.customer, this.calculateTransform(e.customer));
+        setTimeout(() => {
+          const v = this.map.get(e.customer);
+          v.x = 0;
+        }, 100);
       })
     );
   }
 
-  getKeys(map) {
+  getCustomers(map): Customer[] {
     return Array.from(map.keys());
   }
 
-  calculatePosition(customer: Customer): Position {
-    if (!this.currentTime) {
-      return new Position(0, 0);
-    }
-    const subscriptionEnd = new Date(customer.subscribedAt.getTime());
-    subscriptionEnd.setMonth(customer.subscribedAt.getMonth() + 1);
+  calculateTransform(customer: Customer): Transform {
+    const x = this.elementRef.nativeElement.offsetWidth * this.calculateDiffDaysPercent(this.currentTime, customer.subscriptionEndAt) / 100;
+    const y = (this.elementRef.nativeElement.offsetHeight * this.calculateDiffDaysPercent(this.currentTime, customer.touchedAt) / 100) - 55;
+    const transition = (customer.subscriptionEndAt.getTime() - this.currentTime.getTime()) / config.timeScale / 1000;
 
-
-    const x = this.doMagic(this.currentTime, subscriptionEnd);
-    const y = this.doMagic(this.currentTime, customer.touchedAt);
-
-    return new Position(x, y);
+    return new Transform(x, y, transition, );
   }
 
-  doMagic(date1: Date, date2: Date) {
+  calculateDiffDaysPercent(date1: Date, date2: Date) {
     const daysInMonth = 31;
     const timeDiff = Math.abs(date2.getTime() - date1.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-    return  100 * diffDays / daysInMonth;
+    return 100 * diffDays / daysInMonth;
   }
 
   ngOnDestroy(): void {

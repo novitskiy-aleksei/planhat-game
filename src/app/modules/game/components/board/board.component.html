@@ -1,4 +1,7 @@
-<app-customer *ngFor="let customer of getKeys(map);"
-              [ngStyle]="{'transform': 'translate(' + map.get(customer).x + 'px, ' + map.get(customer).y + 'px)'}"
-              [customer]="customer"></app-customer>
+<app-customer *ngFor="let customer of getCustomers(map);"
+              [ngStyle]="{
+                  'transform': 'translate(' + map.get(customer).x + 'px, ' + map.get(customer).y + 'px)',
+                  'transition': 'all ' + map.get(customer).transition + 's' + ' cubic-bezier(1, 1, 0, 0) 0s'
+              }"
+              [health]="customer.health"></app-customer>
 

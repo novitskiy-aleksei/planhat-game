@@ -7,7 +7,8 @@ export class Customer extends Populated {
   name: string;
   phone: string;
   health: number;
-  subscribedAt: Date;
+  _subscribedAt: Date;
+  subscriptionEndAt: Date;
   touchedAt: Date;
   plan: Plan;
   prevPlan: Plan;
@@ -17,6 +18,16 @@ export class Customer extends Populated {
     super(data);
     this.subscribedAt = this.subscribedAt || new Date();
     this.plan = new Plan(Plan.BASIC);
+  }
+
+  set subscribedAt(date: Date) {
+    this._subscribedAt = date;
+    this.subscriptionEndAt = new Date(date.getTime());
+    this.subscriptionEndAt.setMonth(date.getMonth() + 1);
+  }
+
+  get subscribedAt() {
+    return this._subscribedAt;
   }
 
   upgradePlan() {

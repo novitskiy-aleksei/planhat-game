@@ -1,5 +1,6 @@
 :host {
   position: absolute;
+  left: 0;
   .excellent {
     background: rgba(76, 175, 80, 0.6);
     border: 1px solid #4CAF50;
@@ -22,5 +23,12 @@
     height: 50px;
     border-radius: 100%;
     background: red;
+  }
+  @-webkit-keyframes slide {
+    100% { left: 0; }
+  }
+
+  @keyframes slide {
+    100% { left: 0; }
   }
 }
