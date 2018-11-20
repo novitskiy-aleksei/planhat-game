@@ -3,6 +3,7 @@ import { Plan } from './plan';
 import { Task } from './task';
 import { Developer } from './developer';
 import { EngineEvent } from './engine-event.abstract';
+import { GameStats } from './game-stats';
 
 // ######################################################
 // ### From engine to game
@@ -37,6 +38,12 @@ export class FeatureRequestedEvent extends EngineEvent {
   }
 }
 
+export class SupportRequestEvent extends EngineEvent {
+  constructor(public customer: Customer) {
+    super();
+  }
+}
+
 export class BugReportedEvent extends EngineEvent {
   constructor(public customer: Customer, public task: Task) {
     super();
@@ -66,6 +73,12 @@ export class MonthEndedEvent extends EngineEvent {
   }
 }
 
+export class GameStatsEvent extends EngineEvent {
+  constructor(public statistic: GameStats) {
+    super();
+  }
+
+}
 //######################################################
 //### From game to engine
 //######################################################

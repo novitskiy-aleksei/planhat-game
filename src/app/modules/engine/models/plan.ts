@@ -1,9 +1,13 @@
 import { config } from '../configuration';
 
 export class Plan {
-  private _price;
+  static readonly BASIC = 'basic';
+  static readonly STANDARD = 'standard';
+  static readonly PRO = 'pro';
 
-  constructor(public type: 'basic' | 'standart' | 'pro' = 'basic') {
+  private readonly _price;
+
+  constructor(public type: 'basic' | 'standard' | 'pro' = 'basic') {
     this._price = config.plans[type];
   }
 
