@@ -20,6 +20,7 @@ export class LoggerComponent implements OnInit {
 
   ngOnInit() {
     this.setupListeners();
+    this.addItem('Game was started. Good luck!');
   }
 
   setupListeners() {
@@ -49,7 +50,6 @@ export class LoggerComponent implements OnInit {
   }
 
   addItem(template) {
-    this.items.push(template);
+    this.items.splice(0, 0, template);
   }
-
 }

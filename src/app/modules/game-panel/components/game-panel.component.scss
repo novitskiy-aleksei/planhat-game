@@ -1,5 +1,11 @@
 :host {
   display: flex;
-  min-height: 194px;
+  min-height: 154px;
   justify-content: space-between;
+  border-top: 3px dashed black;
+  padding: 5px 0;
+
+  & > * {
+    flex: 1;
+  }
 }
