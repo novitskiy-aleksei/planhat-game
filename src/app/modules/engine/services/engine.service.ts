@@ -15,16 +15,19 @@ import { withChance } from '../../../utils/chance';
 import { Plan } from '../models/plan';
 import { GameStats } from '../models/game-stats';
 import { CustomersService } from './customers.service';
+import { DeveloperPool } from '../models/developer-pool';
+import { Developer } from '../models/developer';
 
 @Injectable()
 export class EngineService {
   private startedAt: Date;
   private monthsPassed = 1;
+  developerPool = new DeveloperPool(2);
 
-  constructor(private emitter: Emitter,
-              private customers: CustomersService) {}
+  constructor(private emitter: Emitter, private customers: CustomersService) {}
 
   initGameData() {
+    console.log('DEVELOPERS:', this.developerPool.developers);
     this.startedAt = new Date();
     this.customers.generate(config.customersStartCount);
     this.setupListeners();

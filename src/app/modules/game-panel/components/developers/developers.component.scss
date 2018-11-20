@@ -4,7 +4,40 @@
 
 .developer {
   width: 180px;
-  height: 180px;
-  background-image: url("../../../../../assets/developer.jpg");
-  background-size: cover;
+  height: 120px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  margin: 5px;
+  text-align: center;
+
+  .image {
+    height: 64px;
+  }
+
+  .status {
+    height: 40px;
+    text-transform: uppercase;
+    text-align: center;
+
+    & > div {
+      padding: 10px;
+    }
+  }
+
+  .marker {
+    color: #fff;
+
+    &.free {
+      background-color: #F4511E;
+    }
+
+    &.in-progress {
+      background-color: #4CAF50;
+    }
+  }
+
+  .finished-button {
+    background-color: #03A9F4;
+    cursor: pointer;
+  }
 }

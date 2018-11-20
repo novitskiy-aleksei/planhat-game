@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Developer } from '../../../engine/models/developer';
+import { EngineService } from 'src/app/modules/engine/services/engine.service';
 
 @Component({
   selector: 'app-developers',
@@ -7,12 +8,9 @@ import { Developer } from '../../../engine/models/developer';
   templateUrl: 'developers.component.html',
 })
 export class DevelopersComponent {
-  developers: Developer[] = [];
+  constructor(private engine: EngineService) {}
 
-  constructor() {
-    this.developers = [
-      new Developer(),
-      new Developer(),
-    ];
+  getDevelopers() {
+    return this.engine.developerPool.developers;
   }
 }

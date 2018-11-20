@@ -1,5 +1,16 @@
 <div class="developers">
-  <div class="developer" *ngFor="let developer of developers">
-    &nbsp;
+  <div class="developer" *ngFor="let developer of getDevelopers();let i = index">
+    <img class="image" [src]="'../../assets/developer' + i + '.png'" />
+    <div class="status">
+      <div class="marker free" *ngIf="!developer.task">
+        I'm free
+      </div>
+      <div class="marker in-progress" *ngIf="developer.task && !developer.task.isFinished()">
+        Work in progress
+      </div>
+      <div class="finished-button" *ngIf="developer.task && developer.task.isFinished()">
+        Deliver to client
+      </div>
+    </div>
   </div>
 </div>
