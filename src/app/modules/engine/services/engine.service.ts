@@ -34,17 +34,7 @@ export class EngineService {
     this.emitter.on<AnsweredTicketEvent>(AnsweredTicketEvent.name).subscribe(e => this.onTickedAnswered(e.customer));
     this.emitter.on<WonBackCancellationEvent>(WonBackCancellationEvent.name).subscribe(e => this.onCancellationWin(e.customer));
     this.emitter.on<TaskFinishedEvent>(TaskFinishedEvent.name).subscribe(e => this.onTaskFinished(e.customer, e.task));
-    this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => {
-      const monthDiff = (e.current.getTime() - e.gameStarted.getTime()) / 1000 / 60 / 60 / 24 / 30;
-      if (this.monthsPassed < monthDiff) {
-        this.monthsPassed++;
-        this.customers.closeMonth();
-        this.emitter.emit(MonthEndedEvent.name, new MonthEndedEvent(new MonthStats(
-          this.customers.customersLost(),
-          this.customers.valueLost()
-        )));
-      }
-    });
+    this.emitter.on<TimeShiftedEvent>(TimeShiftedEvent.name).subscribe(e => this.onMonthEndCheck(e.current, e.gameStarted));
 
     setInterval(() => this.tick(), config.tickInterval);
     setInterval(() => this.generateCustomerGrow(), config.customerGrowCalculationInterval * 100);
@@ -109,6 +99,18 @@ export class EngineService {
     );
   }
 
+  private onMonthEndCheck(current: Date, gameStarted: Date) {
+    const monthDiff = (current.getTime() - gameStarted.getTime()) / 1000 / 60 / 60 / 24 / 30;
+    if (this.monthsPassed < monthDiff) {
+      this.monthsPassed++;
+      this.customers.closeMonth();
+      this.emitter.emit(MonthEndedEvent.name, new MonthEndedEvent(new MonthStats(
+        this.customers.customersLost(),
+        this.customers.valueLost()
+      )));
+    }
+  }
+
   private generateSupportTicketRequest() {
     this.customers.all().forEach(customer => {
       if (withChance(1.8)) {
@@ -122,7 +124,7 @@ export class EngineService {
     this.customers.all().forEach(customer => {
       if (withChance(0.8)) {
         this.emitter.emit(CustomerChangedEvent.name, new CustomerChangedEvent(customer.reduceHealth(config.affections.negative.bug)));
-        this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(customer, new Task('feature')));
+        this.emitter.emit(BugReportedEvent.name, new BugReportedEvent(customer, new Task('bug')));
       }
     });
   }
@@ -143,14 +145,14 @@ export class EngineService {
       }
 
       // downgrade
-      if (customer.plan.type !== Plan.BASIC && withChance(33)) {
+      if (customer.plan.type !== Plan.BASIC && withChance(15)) {
         customer.downgradePlan();
         this.emitter.emit(PlanChangedEvent.name, new PlanChangedEvent(customer));
         return;
       }
 
       // upgrade
-      if (withChance((customer.health / 95) * 100) && customer.plan.type !== Plan.PRO) {
+      if (customer.plan.type !== Plan.PRO && withChance((customer.health / 165) * 100)) {
         const prev = customer.plan;
         customer.upgradePlan();
         this.emitter.emit(PlanChangedEvent.name, new PlanChangedEvent(customer, prev));
