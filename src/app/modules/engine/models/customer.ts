@@ -10,6 +10,7 @@ export class Customer extends Populated {
   subscribedAt: Date;
   touchedAt: Date;
   plan: Plan;
+  prevPlan: Plan;
   needsAttention = false;
 
   constructor(data: any) {

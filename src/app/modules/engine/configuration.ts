@@ -6,6 +6,7 @@ export const config = {
   reduceHpPerTick: 0.001,
 
   customersStartCount: 5,
+  customersMaxCount: 30,
   timeScale: 12960, // real seconds in one game second
   gameDuration:  600, // seconds
 
