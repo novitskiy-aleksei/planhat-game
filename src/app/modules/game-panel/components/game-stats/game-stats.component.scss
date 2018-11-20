@@ -1,0 +1,40 @@
+.stats {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  margin-bottom: 10px;
+  text-align: center;
+
+  .number {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .health-color {
+    display: inline-block;
+    width: 32px;
+    height: 24px;
+    color: #fff;
+    text-align: center;
+
+    &-green {
+      background-color: #388E3C;
+    }
+    &-yellow {
+      background-color: #FB8C00;
+    }
+    &-red {
+      background-color: #E64A19;
+    }
+    &-dark {
+      background-color: #BF360C;
+    }
+  }
+}

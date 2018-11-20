@@ -74,7 +74,7 @@ export class MonthEndedEvent extends EngineEvent {
 }
 
 export class GameStatsEvent extends EngineEvent {
-  constructor(public statistic: GameStats) {
+  constructor(public stats: GameStats) {
     super();
   }
 

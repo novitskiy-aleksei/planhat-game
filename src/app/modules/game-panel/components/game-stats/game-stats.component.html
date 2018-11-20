@@ -1,0 +1,16 @@
+<div class="stats">
+  <div class="row">
+    <div class="number">{{ stats.customersCount }}</div>
+    <div class="label">Paying Customers</div>
+  </div>
+
+  <div class="row">
+    <div class="number" [ngClass]="['health-color', 'health-color-' + healthColor()]">{{ stats.averageCustomerHealth }}</div>
+    <div class="label">Average Health</div>
+  </div>
+
+  <div class="row">
+    <div class="number">{{ stats.portfolioValue }}</div>
+    <div class="label">Portfolio Value</div>
+  </div>
+</div>
