@@ -117,7 +117,7 @@ export class TaskFinishedEvent extends EngineEvent {
 // ######################################################
 
 export class AssignTaskEvent extends EngineEvent {
-  constructor(public task: Task) {
+  constructor(public task: DeveloperTask) {
     super();
   }
 }
