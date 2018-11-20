@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Emitter } from '../../../engine/services/emitter.service';
-import { Customer } from '../../../engine/models/customer';
 import {
   BugReportedEvent,
   CancellationEvent,

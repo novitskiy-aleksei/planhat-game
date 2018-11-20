@@ -16,7 +16,7 @@ export class Customer extends Populated {
   constructor(data: any) {
     super(data);
     this.health = config.defaultHealth;
-    this.subscribedAt = new Date();
+    this.subscribedAt = this.subscribedAt || new Date();
     this.plan = new Plan(Plan.BASIC);
   }
 

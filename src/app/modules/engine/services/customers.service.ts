@@ -31,7 +31,9 @@ export class CustomersService {
       id: faker.random.uuid(),
       name: faker.name.firstName(),
       phone: faker.phone.phoneNumber(),
-      health: faker.random.number({min: 3, max: 5})
+      health: faker.random.number({min: 3, max: 5}),
+      touchedAt: faker.date.soon(3),
+      subscribedAt: faker.date.soon(3)
     });
   }
 
