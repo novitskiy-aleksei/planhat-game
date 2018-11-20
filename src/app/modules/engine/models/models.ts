@@ -15,7 +15,7 @@ export class NewCustomerEvent extends EngineEvent {
 }
 
 export class PlanChangedEvent extends EngineEvent {
-  constructor(public customer: Customer, public previousPlan: Plan) {
+  constructor(public customer: Customer, public previousPlan?: Plan) {
     super();
   }
 }

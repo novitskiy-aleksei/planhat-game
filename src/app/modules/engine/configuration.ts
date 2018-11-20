@@ -12,7 +12,7 @@ export const config = {
 
   customerGrowCalculationInterval: 30,
   customerCancellationCalculationInterval: 15,
-  customerUpgradePlanCalculationInterval: 15,
+  customerUpgradePlanCalculationInterval: 40,
   customerRequestFeatureCalculationInterval: 30,
   customerBugReportCalculationInterval: 30,
   customerSupportTicketCalculationInterval: 30,

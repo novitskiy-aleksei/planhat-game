@@ -29,6 +29,15 @@ export class Customer extends Populated {
     }
   }
 
+  downgradePlan() {
+    if (this.plan.type === Plan.PRO) {
+      this.plan = new Plan(Plan.STANDARD);
+    }
+    if (this.plan.type === Plan.STANDARD) {
+      this.plan = new Plan(Plan.BASIC);
+    }
+  }
+
   reduceHealth(amount: number): this {
     this.health -= amount;
     return this;

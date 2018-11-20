@@ -9,7 +9,6 @@ import {
   TaskFinishedEvent, TimeShiftedEvent,
   WonBackCancellationEvent
 } from '../models/models';
-import * as faker from 'faker';
 import { Task } from '../models/task';
 import { withChance } from '../../../utils/chance';
 import { Plan } from '../models/plan';
@@ -50,7 +49,7 @@ export class EngineService {
     setInterval(() => this.tick(), config.tickInterval);
     setInterval(() => this.generateCustomerGrow(), config.customerGrowCalculationInterval * 100);
     setInterval(() => this.generateCancellation(), config.customerCancellationCalculationInterval * 100);
-    setInterval(() => this.generateUpgradePlan(), config.customerUpgradePlanCalculationInterval * 100);
+    setInterval(() => this.generateChangePlan(), config.customerUpgradePlanCalculationInterval * 100);
     setInterval(() => this.generateFeatureRequestFeature(), config.customerRequestFeatureCalculationInterval * 100);
     setInterval(() => this.generateBugReportFeature(), config.customerBugReportCalculationInterval * 100);
     setInterval(() => this.generateSupportTicketRequest(), config.customerSupportTicketCalculationInterval * 100);
@@ -137,9 +136,21 @@ export class EngineService {
     });
   }
 
-  private generateUpgradePlan() {
+  private generateChangePlan() {
     this.customers.all().forEach(customer => {
-      if (withChance((customer.health / 70) * 100) && customer.plan && customer.plan.type !== Plan.PRO) {
+      if (!customer.plan) {
+        return;
+      }
+
+      // downgrade
+      if (customer.plan.type !== Plan.BASIC && withChance(33)) {
+        customer.downgradePlan();
+        this.emitter.emit(PlanChangedEvent.name, new PlanChangedEvent(customer));
+        return;
+      }
+
+      // upgrade
+      if (withChance((customer.health / 95) * 100) && customer.plan.type !== Plan.PRO) {
         const prev = customer.plan;
         customer.upgradePlan();
         this.emitter.emit(PlanChangedEvent.name, new PlanChangedEvent(customer, prev));
@@ -149,7 +160,7 @@ export class EngineService {
 
   private generateCancellation() {
     this.customers.all().forEach(customer => {
-      if (withChance((customer.health - config.customerMaxHealth) * -0.1)) {
+      if (withChance((customer.health - config.customerMaxHealth) * -0.3)) {
         customer.plan = null;
         this.emitter.emit(CancellationEvent.name, new CancellationEvent(customer));
       }
@@ -162,7 +173,7 @@ export class EngineService {
         return;
       }
 
-      if (withChance((customer.health / 140) * 100) && this.customers.count() < config.customersMaxCount) {
+      if (withChance((customer.health / 240) * 100) && this.customers.count() < config.customersMaxCount) {
         const invitedCustomer = this.customers.createOne();
         this.customers.add(invitedCustomer);
         this.emitter.emit(NewCustomerEvent.name, new NewCustomerEvent(invitedCustomer));
